@@ -1,0 +1,88 @@
+.lscalendar {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.lscalendar__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    height: 35px;
+}
+
+.lscalendar__header_month_name {
+    font-size: 20px;
+}
+
+.lscalendar__header_month_name:hover {
+    cursor: pointer;
+}
+
+.lscalendar__header_button {
+    font-size: 20px;
+    border: none;
+    margin-left: 5px;
+    width: 60px;
+    height: 35px;
+    outline: none;
+    background-color: transparent;
+}
+
+.lscalendar__header_button:hover {
+    cursor: pointer;
+}
+
+.lscalendar__week {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.lscalendar__week:not(:last-child) {
+    border-bottom: 1px solid black;
+}
+
+.lscalendar__week:first-child .lscalendar__day::before {
+    content: attr(lscalendar-weekday);
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    top: -20px;
+}
+
+.lscalendar__day:not(.lscalendar__no_day):not(.lscalendar__day--disabled):hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.lscalendar__day {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 15vw;
+    padding: 5px;
+    position: relative;
+}
+
+.lscalendar__day::after {
+    content: attr(lscalendar-day);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+.lscalendar__week .lscalendar__day:not(:last-child) {
+    border-right: 1px solid black;
+}
+
+.lscalendar__no_day {
+    background-color: #f2f2f2;
+}
+
+.lscalendar__day--disabled {
+    color: #aaa;
+}
