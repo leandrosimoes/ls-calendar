@@ -64,7 +64,7 @@
     flex-direction: column;
     flex: 1;
     min-height: 15vw;
-    padding: 5px;
+    padding: 20px 5px 5px 5px;
     position: relative;
 }
 
@@ -87,12 +87,12 @@
     color: #aaa;
 }
 
-.lscalendar__form.lscalendar__form--hidden {
-    display: none;
+.lscalendar__form--hidden {
+    display: none !important;
 }
 
 .lscalendar__form {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     display: flex;
@@ -142,4 +142,16 @@
 .lscalendar__form_button--red {
     background-color: #F44336;
     color: white;
+}
+
+.lscalendar__appointment {
+    padding: 10px 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,.3);
+    margin-top: 7px;
+    border-radius: 5px;
+    opacity: .9;
+}
+
+.lscalendar__appointment:hover {
+    opacity: 1;
 }
