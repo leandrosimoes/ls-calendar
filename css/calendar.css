@@ -1,8 +1,34 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+:root {
+    /* COMMON COLORS */
+    --black: #000;
+    --light-black: #101010;
+    --dark-grey: #292929;
+    --light-grey: #7e7e7e;
+    --blue: #3a73cc;
+    --red: #f44336;
+    --white: #fff;
+
+    /* COMMON CONFIGURATIONS */
+    --border-config: 1px solid var(--black);
+    --color: var(--black);
+    --bg-color: var(--dark-grey);
+    --font-family: 'Roboto', 'Arial', sans-serif;
+    --border-radius: 3px;
+    --font-size: 20px;
+    --box-shaddow: var(--box-shaddow);
+}
+
 .lscalendar {
     display: flex;
     flex-direction: column;
-    border: 1px solid #000;
-    border-radius: 5px;
+    border: var(--border-config);
+    border-radius: var(--border-radius);
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--blue);
+    font-size: var(--font-size);
 }
 
 .lscalendar__header {
@@ -10,12 +36,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin-bottom: 25px;
-    height: 35px;
-}
-
-.lscalendar__header_month_name {
-    font-size: 20px;
+    border-bottom: var(--border-config);
+    color: var(--blue);
 }
 
 .lscalendar__header_month_name:hover {
@@ -23,13 +45,14 @@
 }
 
 .lscalendar__header_button {
-    font-size: 20px;
+    position: relative;
+    top: -2px;
+    font-size: 30px;
     border: none;
-    margin-left: 5px;
     width: 60px;
-    height: 35px;
     outline: none;
     background-color: transparent;
+    color: var(--blue);
 }
 
 .lscalendar__header_button:hover {
@@ -43,7 +66,7 @@
 }
 
 .lscalendar__week:not(:last-child) {
-    border-bottom: 1px solid black;
+    border-bottom: var(--border-config);
 }
 
 .lscalendar__week:first-child .lscalendar__day::before {
@@ -55,7 +78,8 @@
 }
 
 .lscalendar__day:not(.lscalendar__no_day):not(.lscalendar__day--disabled):hover {
-    background-color: #eee;
+    background-color: var(--blue);
+    color: var(--black);
     cursor: pointer;
 }
 
@@ -63,28 +87,30 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 15vw;
-    padding: 20px 5px 5px 5px;
+    min-height: 8vw;
+    padding: 20px 5px 30px 5px;
     position: relative;
 }
 
 .lscalendar__day::after {
+    font-size: 14px;
     content: attr(lscalendar-day);
     position: absolute;
     top: 5px;
     right: 5px;
 }
 
-.lscalendar__week .lscalendar__day:not(:last-child) {
-    border-right: 1px solid black;
+.lscalendar__day:not(:last-child) {
+    border-right: var(--border-config);
 }
 
 .lscalendar__no_day {
-    background-color: #f2f2f2;
+    background-color: var(--light-black);
 }
 
 .lscalendar__day--disabled {
-    color: #aaa;
+    color: var(--black);;
+    background-color: var(--light-black);;
 }
 
 .lscalendar__form--hidden {
@@ -96,62 +122,104 @@
     top: 50%;
     left: 50%;
     display: flex;
-    transform: translate(-50%,-50%);
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,.2);
+    transform: translate(-50%, -50%);
+    background-color: #171717;
+    box-shadow: var(--box-shaddow);
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     padding: 20px;
     z-index: 2;
-    min-width: 380px;
+    min-width: 417px;
+}
+
+.lscalendar__form_title {
+    margin-left: 4px;
 }
 
 .lscalendar__form_close_button {
-    color: #aaa;
+    color: var(--light-grey);
     position: absolute;
     top: 10px;
     right: 10px;
     cursor: pointer;
-    font-size: 20px;
+}
+
+.lscalendar__form_close_button:hover {
+    color: var(--blue);
 }
 
 .lscalendar__form_input {
     padding: 5px;
-    border-radius: 3px;
-    border: 1px solid #c2c2c2;
+    border-radius: var(--border-radius);
+    border: var(--border-config);
     margin: 3px;
     min-height: 20px;
     line-height: 20px;
 }
 
 .lscalendar__form_button {
-    line-height: 30px;
+    line-height: 27px;
     border: none;
     margin: 1px;
     min-width: 80px;
     outline: none;
     cursor: pointer;
+    border-radius: var(--border-radius);
 }
 
 .lscalendar__form_button--blue {
-    background-color: #1976D2;
+    background-color: var(--blue);
     color: white;
 }
 
 .lscalendar__form_button--red {
-    background-color: #F44336;
+    background-color: var(--red);
     color: white;
 }
 
 .lscalendar__appointment {
+    font-size: 15px;
     padding: 10px 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,.3);
+    box-shadow: var(--box-shaddow);
     margin-top: 7px;
-    border-radius: 5px;
-    opacity: .9;
+    border-radius: var(--border-radius);
+    opacity: 0.9;
+    color: var(--white);
 }
 
 .lscalendar__appointment:hover {
     opacity: 1;
+}
+
+@media (max-width: 480px) {
+    .lscalendar__week {
+        flex-direction: column;
+    }
+
+    .lscalendar__week {
+        border: none !important;
+    }
+
+    .lscalendar__day {
+        border-right: none !important;
+        border-top: var(--border-config);
+    }
+
+    .lscalendar__form {
+        min-width: 225px;
+    }
+
+    .lscalendar__day--disabled,
+    .lscalendar__no_day {
+        display: none;
+    }
+
+    .lscalendar__header {
+        border: none;
+    }
+
+    .lscalendar__form_title {
+        font-size: 14px;
+    }
 }

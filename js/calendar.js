@@ -27,6 +27,7 @@
         appointment: 'lscalendar__appointment',
     }
     let MOCK_APPOINTMENTS = []
+    let LAST_COLOR = null
     function getAppointmentById(id) {
         return MOCK_APPOINTMENTS.find(m => m.id == id)
     }
@@ -57,7 +58,6 @@
         }
 
         const appointment_between_found = MOCK_APPOINTMENTS.find(m => {
-            debugger
             if (initDate <= m.initDate && endDate >= m.endDate) return true
 
             if (initDate < m.endDate && initDate >= m.initDate) return true
@@ -108,9 +108,9 @@
 
         const close_button = document.createElement('span')
         close_button.classList.add(CLASSES.formCloseButton)
-        close_button.innerHTML = 'x'
+        close_button.innerHTML = '&times;'
 
-        const form_title = document.createElement('h4')
+        const form_title = document.createElement('span')
         form_title.classList.add(CLASSES.formTitle)
         form_title.innerHTML = 'Teste'
 
@@ -155,7 +155,7 @@
         form_input_wrapper.appendChild(delete_button)
         form.appendChild(form_input_wrapper)
 
-        self.wrapper.appendChild(form)
+        self.element.appendChild(form)
 
         return form
     }
@@ -184,7 +184,7 @@
         current_week.classList.add(CLASSES.week)
 
         const prevButton = document.createElement('button')
-        prevButton.innerText = '<'
+        prevButton.innerText = '‹'
         prevButton.classList.add(CLASSES.headerButton)
 
         const monthName = document.createElement('span')
@@ -192,7 +192,7 @@
         monthName.classList.add(CLASSES.monthName)
 
         const nextButton = document.createElement('button')
-        nextButton.innerText = '>'
+        nextButton.innerText = '›'
         nextButton.classList.add(CLASSES.headerButton)
 
         const header = document.createElement('div')
@@ -201,7 +201,7 @@
         header.appendChild(nextButton)
         header.classList.add(CLASSES.header)
 
-        wrapper.appendChild(header)
+        element.appendChild(header)
 
         self.monthName = monthName
         self.prevButton = prevButton
@@ -323,7 +323,11 @@
     }
 
     function getRamdomColor() {
-        return COLORS[Math.floor(Math.random() * COLORS.length)]
+        let result = COLORS[Math.floor(Math.random() * COLORS.length)]
+        while (result === LAST_COLOR) {
+            result = COLORS[Math.floor(Math.random() * COLORS.length)]
+        }
+        return result
     }
 
     let Appointment = function({ calendar, description, initDate, endDate }) {
@@ -378,7 +382,7 @@
 
     function openModalForm({ id = '', description = '', calendar, day, month, year, init_hour, end_hour }) {
         const current_date = new Date()
-        const date = new Date(day, month, year)
+        const date = new Date(year, month, day)
 
         let form = document.querySelector(`.${CLASSES.form}`)
         if (!form) {
