@@ -40,11 +40,11 @@
     color: var(--blue);
 }
 
-.lscalendar__header_month_name:hover {
+.lscalendar__header__month_name:hover {
     cursor: pointer;
 }
 
-.lscalendar__header_button {
+.lscalendar__header__button {
     position: relative;
     top: -2px;
     font-size: 30px;
@@ -55,7 +55,7 @@
     color: var(--blue);
 }
 
-.lscalendar__header_button:hover {
+.lscalendar__header__button:hover {
     cursor: pointer;
 }
 
@@ -133,11 +133,11 @@
     min-width: 417px;
 }
 
-.lscalendar__form_title {
+.lscalendar__form__title {
     margin-left: 4px;
 }
 
-.lscalendar__form_close_button {
+.lscalendar__form__close_button {
     color: var(--light-grey);
     position: absolute;
     top: 10px;
@@ -145,11 +145,11 @@
     cursor: pointer;
 }
 
-.lscalendar__form_close_button:hover {
+.lscalendar__form__close_button:hover {
     color: var(--blue);
 }
 
-.lscalendar__form_input {
+.lscalendar__form__input {
     padding: 5px;
     border-radius: var(--border-radius);
     border: var(--border-config);
@@ -219,7 +219,7 @@
         border: none;
     }
 
-    .lscalendar__form_title {
+    .lscalendar__form__title {
         font-size: 14px;
     }
 }

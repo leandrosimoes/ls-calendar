@@ -6,14 +6,19 @@
 		<title>Calendar App</title>
 		<link rel="stylesheet" href="css/calendar.css">
 		<style>
+			@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 			html,
 			body {
 				margin: 0;
 				padding: 0;
 				background-color: #3a73cc;
+				color: #292929;
+				font-family: Roboto, Arial, Helvetica, sans-serif;
 			}
 
 			@media (min-width: 480px) {
+				#instructions,
 				#calendar {
 					width: 70%;
 					margin: 50px auto;
@@ -22,8 +27,11 @@
 		</style>
 	</head>
 	<body>
+		<div id="instructions">
+			<h1>Hi! This is the LsCalendar Plugin</h1>
+		</div>
 		<div id="calendar"></div>
-		<script src="js/calendar.js"></script>
+		<script type="module" src="js/calendar.js"></script>
 		<script>
 			document.addEventListener('readystatechange', event => {
 				if (document.readyState === 'complete') {
