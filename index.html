@@ -17,6 +17,22 @@
 				font-family: Roboto, Arial, Helvetica, sans-serif;
 			}
 
+			body.loading::after {
+				position: fixed;
+				content: 'Loading...';
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				z-index: 999;
+				background-color: #292929;
+				color: #3a73cc;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				font-size: 20px;
+			}
+
 			@media (min-width: 480px) {
 				#instructions,
 				#calendar {
@@ -26,17 +42,56 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body class="loading">
 		<div id="instructions">
-			<h1>Hi! This is the LsCalendar Plugin</h1>
+			<h1>Hi! This is the LsCalendar App</h1>
 		</div>
 		<div id="calendar"></div>
 		<script type="module" src="js/calendar.js"></script>
 		<script>
 			document.addEventListener('readystatechange', event => {
 				if (document.readyState === 'complete') {
+					const MOCK_DATA_KEY = 'lscalendar-mock-data'
+					// Just a very simple way to mock and persist data with localstorage
+					// and be possible to do tests even reloading the page
+					const getMockData = () => {
+						let appointments = localStorage.getItem(MOCK_DATA_KEY) || '[]'
+						appointments = JSON.parse(appointments)
+						appointments = appointments.map(a => {
+							a.init_date = new Date(a.init_date)
+							a.end_date = new Date(a.end_date)
+							const appointment = new Appointment({ ...a })
+							return appointment
+						})
+						return appointments
+					}
+
+					const setMockData = data => {
+						localStorage.setItem(MOCK_DATA_KEY, JSON.stringify(data))
+					}
+
 					const wrapper = document.querySelector('#calendar')
-					const lsCalendar = new LsCalendar({ wrapper })
+					const onInit = () => {
+						console.log(`Calendar renderd at: ${new Date().toString()}`)
+						document.body.classList.remove('loading')
+					}
+					const onSaveAppointment = appointment => {
+						console.log(`Appointment ${appointment.id} saved at: ${new Date().toString()}`)
+
+						let appointments = getMockData()
+						appointments = appointments.filter(a => a.id != appointment.id)
+						appointments.push({ id, color, init_date, end_date, description } = appointment)
+						setMockData(appointments)
+					}
+					const onDeleteAppointment = id => {
+						console.log(`Appointment ${id} deleted at: ${new Date().toString()}`)
+
+						let appointments = getMockData()
+						appointments = appointments.filter(a => a.id != id)
+						setMockData(appointments)
+					}
+					const lsCalendar = new LsCalendar({ wrapper, onInit, onSaveAppointment, onDeleteAppointment })
+					lsCalendar.init(getMockData())
 				}
 			})
 		</script>

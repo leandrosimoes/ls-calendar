@@ -1,4 +1,4 @@
-let _MOCK_APPOINTMENTS = []
+let _APPOINTMENTS = []
 import { isPastDate, isValidDateRange } from './utils.js'
 
 export function isValidAppointment({ id, init_date, end_date, description, minDescriptionLength }) {
@@ -26,21 +26,21 @@ export function isValidAppointment({ id, init_date, end_date, description, minDe
 }
 
 export function addAppointment(appointment) {
-    _MOCK_APPOINTMENTS.push(appointment)
-    _MOCK_APPOINTMENTS = _MOCK_APPOINTMENTS.sort((a, b) => (a.init_date > b.init_date ? 1 : -1))
-    return _MOCK_APPOINTMENTS
+    _APPOINTMENTS.push(appointment)
+    _APPOINTMENTS = _APPOINTMENTS.sort((a, b) => (a.init_date > b.init_date ? 1 : -1))
+    return _APPOINTMENTS
 }
 
 export function getAppointments() {
-    return _MOCK_APPOINTMENTS
+    return _APPOINTMENTS
 }
 
 export function getAppointmentById(id) {
-    return _MOCK_APPOINTMENTS.find(m => m.id == id)
+    return _APPOINTMENTS.find(m => m.id == id)
 }
 
 export function getAppointmentsByPeriod(init_date, end_date) {
-    return _MOCK_APPOINTMENTS.filter(m => {
+    return _APPOINTMENTS.filter(m => {
         if (init_date <= m.init_date && end_date >= m.end_date) return true
 
         if (init_date < m.end_date && init_date >= m.init_date) return true
@@ -52,11 +52,11 @@ export function getAppointmentsByPeriod(init_date, end_date) {
 }
 
 export function deleteAppointment(id) {
-    const appointment_found = _MOCK_APPOINTMENTS.find(m => m.id == id)
+    const appointment_found = _APPOINTMENTS.find(m => m.id == id)
 
     if (!appointment_found) return false
 
-    _MOCK_APPOINTMENTS = _MOCK_APPOINTMENTS.filter(m => m.id != appointment_found.id)
+    _APPOINTMENTS = _APPOINTMENTS.filter(m => m.id != appointment_found.id)
 
     return true
 }
