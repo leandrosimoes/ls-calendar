@@ -109,7 +109,7 @@
 }
 
 .lscalendar__day--disabled {
-    color: var(--black);;
+    color: var(--light-grey);
     background-color: var(--light-black);;
 }
 
