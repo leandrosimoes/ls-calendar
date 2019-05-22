@@ -1,43 +1,39 @@
 import { _CLASSES } from './constants.js'
 import Appointment from './appointment.js'
 import { getAppointmentById, deleteAppointment, addAppointment, isValidAppointment } from './data.js'
-import { buildCalendarUI, destroyCalendarUI, fillAppointments } from './calendar-ui-builder.js'
+import { buildCalendarUI, fillAppointments } from './calendar-ui-builder.js'
+import { generateGUID } from './utils.js'
 
 class LsCalendar {
-    constructor({ wrapper, onInit, onSaveAppointment, onDeleteAppointment }) {
+    constructor(wrapper) {
+        if (!(wrapper instanceof HTMLDivElement)) throw new Error('The wrapper element must be a valid HTMLDivElement')
+
         this.wrapper = wrapper
-        this.days = []
         this.current_date = new Date()
-        this.month_name = null
-        this.next_button = null
-        this.prev_button = null
-        this.form = null
         this.element = null
-        this.onSaveAppointment = (onSaveAppointment || function() {}).bind(this)
-        this.onDeleteAppointment = (onDeleteAppointment || function() {}).bind(this)
-        this.onInit = (onInit || function() {}).bind(this)
-    }
-
-    init(appointments = []) {
-        if (appointments && appointments.length > 0) {
-            appointments.forEach(appointment => {
-                const validation = isValidAppointment(appointment)
-                if (validation === true) {
-                    appointment.calendar = this
-                    addAppointment(appointment)
-                }
-            })
-        }
-
+        
         buildCalendarUI(this)
-        this.onInit()
+
+        console.log(`Calendar renderd at: ${new Date().toString()}`)
+        document.body.classList.remove('loading')
     }
 
+    /**
+     * Open the Form Modal to Add/Edit a Appointment
+     * @param {object} options 
+     * @param {string} options.id Appointment id in a GUID format (optional if is not editting) 
+     * @param {int} options.day 
+     * @param {int} options.month 
+     * @param {int} options.year 
+     * @param {string} options.description Appointment description (optional if is not editting) 
+     * @param {int} options.init_hour 
+     * @param {int} options.end_hour 
+     */
     openFormModal({ id, day, month, year, description = '', init_hour, end_hour }) {
         const current_date = new Date()
         const date = new Date(year, month, day)
 
-        let form = document.querySelector(`.${_CLASSES.form}`)
+        const form = document.querySelector(`.${_CLASSES.form}`)
         form.setAttribute('lscalendar-appointment-id', id)
         form.setAttribute('lscalendar-day', day)
         form.setAttribute('lscalendar-month', month)
@@ -59,10 +55,14 @@ class LsCalendar {
         }
     }
 
+    /**
+     * Deletes a Appointment based on the Form Modal data
+     */
     deleteAppointment() {
         if (!confirm('Are you sure you want to delete this appointment?')) return true
 
-        const id = this.form.getAttribute('lscalendar-appointment-id')
+        const form = document.querySelector(`.${_CLASSES.form}`)
+        const id = form.getAttribute('lscalendar-appointment-id')
 
         const appointment = getAppointmentById(id)
         if (!appointment) {
@@ -75,21 +75,24 @@ class LsCalendar {
         }
 
         this.closeFormModal()
-        this.onDeleteAppointment(id)
 
         return true
     }
 
+    /**
+     * Saves a Appointment based on the Form Modal data
+     */
     saveAppointment() {
-        const id = this.form.getAttribute('lscalendar-appointment-id')
-        const day = this.form.getAttribute('lscalendar-day')
+        const form = document.querySelector(`.${_CLASSES.form}`)
+        const id = form.getAttribute('lscalendar-appointment-id')
+        const day = form.getAttribute('lscalendar-day')
         const month = this.current_date.getMonth()
         const year = this.current_date.getFullYear()
-        const init_hour = this.form.querySelector(`.${_CLASSES.form_input_hour}`).value.split(':')
-        const end_hour = this.form.querySelector(`.${_CLASSES.form_input_hour_end}`).value.split(':')
+        const init_hour = form.querySelector(`.${_CLASSES.form_input_hour}`).value.split(':')
+        const end_hour = form.querySelector(`.${_CLASSES.form_input_hour_end}`).value.split(':')
         const init_date = new Date(year, month, day, init_hour[0], init_hour[1])
         const end_date = new Date(year, month, day, end_hour[0], end_hour[1])
-        const description = this.form.querySelector(`.${_CLASSES.form_input_description}`).value
+        const description = form.querySelector(`.${_CLASSES.form_input_description}`).value
 
         const validation = isValidAppointment({ id, init_date, end_date, description })
         if (validation !== true) {
@@ -102,7 +105,7 @@ class LsCalendar {
             appointment.destroy()
         }
 
-        let options = { ...appointment, calendar: this, description, init_date, end_date }
+        let options = { ...appointment, description, init_date, end_date, calendarInscance: this }
         appointment = new Appointment({ ...options })
 
         addAppointment(appointment)
@@ -111,42 +114,54 @@ class LsCalendar {
         fillAppointments(this, day_element)
 
         this.closeFormModal()
-        this.onSaveAppointment(appointment)
 
         return true
     }
 
+    /**
+     * Set the calendar to a specific @date
+     * @param {Date} date 
+     */
     goToDate(date = new Date()) {
         this.current_date = date
-        destroyCalendarUI(this)
         buildCalendarUI(this)
     }
 
+    /**
+     * Set the calendar month to the next month based on the current calendars month
+     */
     goToNextMonth() {
         this.current_date.setMonth(this.current_date.getMonth() + 1)
         this.goToDate(this.current_date)
     }
 
+    /**
+     * Set the calendar month to the previous month based on the current calendars month
+     */
     goToPrevMonth() {
         this.current_date.setMonth(this.current_date.getMonth() - 1)
         this.goToDate(this.current_date)
     }
 
+    /**
+     * Set the calendar month to the current month based on the current date
+     */
     goToCurrentMonth = function() {
         this.goToDate()
     }
 
+    /**
+     * Closes the Form Data and clears its data
+     */
     closeFormModal() {
-        if (!this.form) return
-
-        this.form.querySelector(`.${_CLASSES.form_input_description}`).value = ''
-        this.form.querySelector(`.${_CLASSES.form_title}`).value = ''
-        this.form.removeAttribute('lscalendar-day')
-        this.form.removeAttribute('lscalendar-month')
-        this.form.removeAttribute('lscalendar-year')
-        this.form.classList.add(_CLASSES.hidden_form)
+        const form = document.querySelector(`.${_CLASSES.form}`)
+        form.querySelector(`.${_CLASSES.form_input_description}`).value = ''
+        form.querySelector(`.${_CLASSES.form_title}`).value = ''
+        form.removeAttribute('lscalendar-day')
+        form.removeAttribute('lscalendar-month')
+        form.removeAttribute('lscalendar-year')
+        form.classList.add(_CLASSES.hidden_form)
     }
 }
 
 window.LsCalendar = LsCalendar
-window.Appointment = Appointment

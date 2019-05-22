@@ -1,7 +1,52 @@
-let _APPOINTMENTS = []
 import { isPastDate, isValidDateRange } from './utils.js'
+import Appointment from './appointment.js'
 
-export function isValidAppointment({ id, init_date, end_date, description, minDescriptionLength }) {
+const _DATA = 'lscalendar-mock-data'
+let APPOINTMENTS = []
+
+/**
+ * Save the data in the user's localstorage
+ * PS: I used localstorage since this App is not used in production
+ *     If this was the case, I would implement a ajax to store the data
+ *     in a server for example.
+ * @param {Object} data Containing an array of Appointments 
+ */
+export const saveData = data => {
+    localStorage.setItem(_DATA, JSON.stringify(data))
+}
+
+/**
+ * Get the data from the user's localstorage
+ * PS: I used localstorage since this App is not used in production
+ *     If this was the case, I would implement a ajax to get the stored data
+ *     from a server for example.
+ * @param {Object} data Containing an array of Appointments 
+ */
+export const getData = () => {
+    let appointments = localStorage.getItem(_DATA) || '[]'
+    appointments = JSON.parse(appointments)
+    appointments = appointments.map(a => {
+        a.init_date = new Date(a.init_date)
+        a.end_date = new Date(a.end_date)
+        a.calendarInstance = null
+        const appointment = new Appointment({ ...a })
+        return appointment
+    })
+    appointments = appointments.sort((a, b) => (a.init_date > b.init_date ? 1 : -1))
+    return appointments
+}
+
+/**
+ * Check if the data is valid for a Appointment
+ * @param {Object} options
+ * @param {string} options.id Appointment id in a GUID format
+ * @param {Date} options.init_date Appointment init date
+ * @param {Date} options.end_date Appointment end date
+ * @param {string} options.description Appointment desctiption
+ * @returns {boolean} "true" if is valid
+ * @returns {string} Error message if is not valid
+ */
+export function isValidAppointment({ id, init_date, end_date, description }) {
     if (isPastDate(init_date)) return 'The "init_date" provided is not a valid "Date"'
     if (isPastDate(end_date)) return 'The "end_date" provided is not a valid "Date"'
     if (!isValidDateRange(init_date, end_date)) return 'The "end_date" must be greather then the "init_date" provided is not a valid "Date"'
@@ -10,8 +55,8 @@ export function isValidAppointment({ id, init_date, end_date, description, minDe
         return 'The "description" provided is not a valid "string"'
     }
 
-    if (description.length < minDescriptionLength) {
-        return `The "description" must have at least ${minDescriptionLength} characters.`
+    if (description.length < 6) {
+        return `The "description" must have at least 6 characters.`
     }
 
     let appointment_between_found = getAppointmentsByPeriod(init_date, end_date)
@@ -25,22 +70,53 @@ export function isValidAppointment({ id, init_date, end_date, description, minDe
     return true
 }
 
+/**
+ * Add a new appointment to the list and save the data
+ * @param {appointment} appointment Appointment class instance
+ */
 export function addAppointment(appointment) {
-    _APPOINTMENTS.push(appointment)
-    _APPOINTMENTS = _APPOINTMENTS.sort((a, b) => (a.init_date > b.init_date ? 1 : -1))
-    return _APPOINTMENTS
+    APPOINTMENTS = getData()
+    APPOINTMENTS.push(appointment)
+
+    let data = getData()
+    data = data.filter(a => a.id != appointment.id)
+    const { id, color, init_date, end_date, description } = appointment
+    data.push({ id, color, init_date, end_date, description })
+    
+    saveData(data)
+
+    return APPOINTMENTS
 }
 
+/**
+ * Get all appointments
+ * @returns {Array} Array of Appointment classes instance
+ */
 export function getAppointments() {
-    return _APPOINTMENTS
+    APPOINTMENTS = getData()
+    APPOINTMENTS = APPOINTMENTS.sort((a, b) => (a.init_date > b.init_date ? 1 : -1))
+    return APPOINTMENTS
 }
 
+/**
+ * Get a specific Appointment by id
+ * @param {string} id Appointment's id in GUID format
+ * @returns {object} Appointment class instance
+ */
 export function getAppointmentById(id) {
-    return _APPOINTMENTS.find(m => m.id == id)
+    return APPOINTMENTS.find(m => m.id == id)
 }
 
+/**
+ * Get an Array of Appointment classes instance that has the
+ * init_date between the @init_date and @end_date params
+ * @param {Date} init_date 
+ * @param {Date} end_date 
+ * @returns {object} Appointment class instance
+ */
 export function getAppointmentsByPeriod(init_date, end_date) {
-    return _APPOINTMENTS.filter(m => {
+    APPOINTMENTS = getData()
+    return APPOINTMENTS.filter(m => {
         if (init_date <= m.init_date && end_date >= m.end_date) return true
 
         if (init_date < m.end_date && init_date >= m.init_date) return true
@@ -51,12 +127,20 @@ export function getAppointmentsByPeriod(init_date, end_date) {
     })
 }
 
+/**
+ * Deletes a Appointment that has the id equals to the @id param
+ * @param {string} id Appointment id in GUID format
+ */
 export function deleteAppointment(id) {
-    const appointment_found = _APPOINTMENTS.find(m => m.id == id)
+    APPOINTMENTS = getData()
+    const appointment_found = APPOINTMENTS.find(m => m.id == id)
 
     if (!appointment_found) return false
 
-    _APPOINTMENTS = _APPOINTMENTS.filter(m => m.id != appointment_found.id)
+    console.log(`Appointment ${id} deleted at: ${new Date().toString()}`)
+
+    APPOINTMENTS = APPOINTMENTS.filter(a => a.id != id)
+    saveData(APPOINTMENTS)
 
     return true
 }

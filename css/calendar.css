@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Lobster');
 
 :root {
     /* COMMON COLORS */
@@ -20,6 +20,45 @@
     --box-shaddow: var(--box-shaddow);
 }
 
+/* HTML/BODY */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--blue);
+    color: var(--dark-grey);
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+}
+
+body.loading::after {
+    position: fixed;
+    content: 'Loading...';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    background-color: var(--dark-grey);
+    color: var(--blue);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 20px;
+}
+/* END HTML/BODY */
+
+/* INSTRUCTIONS */
+#instructions h1 {
+    text-align: center;
+    font-family: Lobster, Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#instructions li {
+    color: var(--white);
+    line-height: 25px;
+}
+/* END INSTRUCTIONS */
+
 /* MAIN */
 .lscalendar {
     display: flex;
@@ -32,7 +71,6 @@
     font-size: var(--font-size);
 }
 /* END MAIN */
-
 
 /* HEADER */
 .lscalendar__header {
@@ -62,9 +100,20 @@
 .lscalendar__header__button:hover {
     cursor: pointer;
 }
-
 /* END HEADER */
 
+/* WEEKDAYS */
+.lscalendar__weekdays {
+    display: flex;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.lscalendar__weekday {
+    flex: 1;
+    text-align: center;
+}
+/* END WEEKDAYS */
 
 /* WEEK */
 .lscalendar__week {
@@ -77,13 +126,8 @@
     border-bottom: var(--border-config);
 }
 
-.lscalendar__day::before {
-    content: attr(lscalendar-weekday);
-    position: absolute;
-    text-align: center;
-    width: 100%;
-    top: -65px;
-    color: var(--dark-grey);
+.lscalendar__week--hidden {
+    display: none;
 }
 /* END WEEK */
 
@@ -121,7 +165,7 @@
 
 .lscalendar__day--disabled {
     color: var(--light-grey);
-    background-color: var(--light-black);;
+    background-color: var(--light-black);
 }
 /* END DAY */
 
@@ -143,7 +187,7 @@
     align-items: flex-start;
     padding: 20px;
     z-index: 2;
-    min-width: 417px;
+    min-width: 345px;
 }
 
 .lscalendar__form__title {
@@ -169,6 +213,7 @@
     margin: 3px;
     min-height: 20px;
     line-height: 20px;
+    box-sizing: border-box;
 }
 
 .lscalendar__form_button {
@@ -209,6 +254,12 @@
 /* END APPOINTMENT */
 
 @media (max-width: 480px) {
+    #instructions,
+    #calendar {
+        width: 95%;
+        margin: 50px auto;
+    }
+
     /* WEEK */
     .lscalendar__week {
         flex-direction: column;
@@ -218,6 +269,12 @@
         border: none !important;
     }
     /* END WEEK */
+
+    /* WEEKDAYS */
+    .lscalendar__weekdays {
+        display: none;
+    }
+    /* END WEEKDAYS */
 
     /* DAY */
     .lscalendar__day {
@@ -231,17 +288,39 @@
     }
 
     .lscalendar__day::before {
-        display: none;
+        content: attr(lscalendar-weekday);
+        position: absolute;
+        width: 100%;
+        top: 5px;
+        left: 5px;
+        color: var(--blue);
+        font-size: 16px;
     }
     /* END DAY */
 
     /* FORM */
     .lscalendar__form {
-        min-width: 225px;
+        min-width: 80%;
+        min-height: 90%;
+    }
+
+    .lscalendar__form > div {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-self: center;
+    }
+
+    .lscalendar__form .lscalendar__form__input,
+    .lscalendar__form .lscalendar__form_button {
+        margin-bottom: 10px;
+        height: 45px;
+        line-height: 45px;
+        font-size: 16px;
     }
 
     .lscalendar__form__title {
-        font-size: 14px;
+        margin-bottom: 10px;
     }
     /* END FORM */
 
@@ -250,4 +329,12 @@
         border: none;
     }
     /* END HEADER */
+}
+
+@media (min-width: 480px) {
+    #instructions,
+    #calendar {
+        width: 70%;
+        margin: 50px auto;
+    }
 }
